@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Events on This Date</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
+    <style>
+    body {
+        font-family: 'Roboto', Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-image: url(BACKGROUND.jpeg);
+        background-size: cover;
+        background-attachment: fixed;
+        color: #f0f0f0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        min-height: 100vh; 
+        padding-top: 50px;
+    }
+    .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between; 
+            padding: 10px 20px;
+            background-color: #f8f9fa00; 
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .navbar img {
+            height: 40px; 
+            width: auto;
+        }
+        .navbar h1 {
+            color: #ff0015;
+            font-size: 28px;
+            margin: 0;
+            font-family: cursive;
+        }
+    .container {
+        text-align: center;
+        width: 90%;
+        max-width: 800px;
+        background: rgba(0, 0, 0, 0.8);
+        border-radius: 15px;
+        padding: 40px 20px;
+        box-shadow: 0 6px 30px rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(6px);
+        animation: fadeIn 1.5s ease;
+        margin-bottom: 50px;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.9); }
+        to { opacity: 1; transform: scale(1); }
+    }
+    h1 {
+        margin-bottom: 20px;
+        font-size: 3em;
+        color: #ffce67;
+        font-family: 'Pacifico', cursive;
+    }
+    #searchYearContainer {
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+    }
+    input[type="text"] {
+        padding: 10px;
+        font-size: 16px;
+        border: 2px solid #ffce67;
+        border-radius: 8px;
+        width: 250px;
+        background: rgba(255, 255, 255, 0.2);
+        color: #fff;
+        transition: border-color 0.3s;
+    }
+    input[type="text"]:focus {
+        border-color: #66b2ff;
+    }
+    button {
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #ffce67;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        box-shadow: 0px 4px 10px rgba(255, 206, 103, 0.5);
+        transition: background-color 0.3s ease, transform 0.2s;
+    }
+    button:hover {
+        background-color: #d49d47;
+        transform: translateY(-2px);
+    }
+    #eventsResult {
+        margin-top: 20px;
+        text-align: left;
+        max-height: 60vh;
+        overflow-y: auto;
+        padding-right: 10px;
+    }
+    .event-item {
+        padding: 15px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        margin-bottom: 10px;
+        transition: background 0.3s ease;
+        cursor: pointer;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    .event-item:hover {
+        background: rgba(255, 255, 255, 0.3);
+    }
+    .event-item:hover {
+        animation: jumpEffect 0.5s ease forwards;
+    }
+    @keyframes jumpEffect {
+        0% {
+            transform: translateY(0);
+        }
+        30% {
+            transform: translateY(-15px); 
+        }
+        50% {
+            transform: translateY(0);
+        }
+        70% {
+            transform: translateY(-7px);
+        }
+        100% {
+            transform: translateY(0);
+        }
+    }
+    .event-item .year {
+        color: #ffce67;
+        font-weight: bold;
+        font-size: 1.1em;
+    }
+    .event-item a {
+        text-decoration: none;
+        color: #66b2ff;
+        transition: color 0.3s ease;
+        font-weight: bold;
+    }
+    .event-item a:hover {
+        color: #4d91cc;
+        text-decoration: underline;
+    }
+    #checkboxContainer {
+        margin-bottom: 20px;
+    }
+    #checkboxContainer label {
+        color: #f0f0f0;
+        font-weight: bold;
+    }
+    .fadeIn {
+        animation: fadeInEvent 0.8s ease forwards;
+    }
+    @keyframes fadeInEvent {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+</head>
+<body>
+    <div class="navbar">
+        <img src="LOGO (2).jpeg" alt="Left Logo">
+        <h1>Chronicles of Time</h1>
+        <img src="LOGO (2).jpeg" alt="Right Logo">
+    </div>
+    <div class="container">
+        <h1>Events on This Date:</h1>
+        <div id="checkboxContainer">
+            <label for="enableSearch">SEARCH FOR SPECIFICATION:</label>
+            <input type="checkbox" id="enableSearch">
+        </div>
+        <div id="searchYearContainer" style="display: none;">
+            <input type="text" id="yearSearch" placeholder="Enter year to filter (e.g. 1912)">
+            <button onclick="filterByYear()">SEARCH</button>
+        </div>
+        <div id="eventsResult"></div>
+    </div>
+    <script>
+        const eventsResult = document.getElementById('eventsResult');
+        const yearSearch = document.getElementById('yearSearch');
+        const enableSearchCheckbox = document.getElementById('enableSearch');
+        const searchYearContainer = document.getElementById('searchYearContainer');
+        let allEvents = [];
+        function getQueryParams() {
+            const params = {};
+            window.location.search.substring(1).split("&").forEach(param => {
+                const [key, value] = param.split("=");
+                params[decodeURIComponent(key)] = decodeURIComponent(value);
+            });
+            return params;
+        }
+        async function fetchAndDisplayEvents() {
+            const { day, month } = getQueryParams();
+            const events = await getWikipediaEvents(day, month);
+            allEvents = events;
+            displayEvents(events);
+        }
+        async function getWikipediaEvents(day, month) {
+            const url = `https://en.wikipedia.org/api/rest_v1/feed/onthisday/events/${month}/${day}`;
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                return data.events.map(event => ({
+                    year: event.year,
+                    text: event.text,
+                    url: event.wikipedia_url
+                }));
+            } catch (error) {
+                console.error('Failed to fetch Wikipedia events:', error);
+                return [];
+            }
+        }
+        function displayEvents(events) {
+            if (events.length === 0) {
+                eventsResult.innerHTML = '<p>No events found for this date.</p>';
+                return;
+            }
+            eventsResult.innerHTML = events.map(event => {
+                const eventUrl = event.url ? event.url : `https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(event.text)}`;
+                return `<div class="event-item fadeIn"><span class="year">${event.year}</span>: <a href="${eventUrl}" target="_blank">${event.text}</a></div>`;
+            }).join('');
+        }
+        function filterByYear() {
+            const searchYear = yearSearch.value.trim();
+            if (searchYear === "") {
+                displayEvents(allEvents);
+                return;
+            }
+            const parsedYear = parseInt(searchYear, 10);
+            if (isNaN(parsedYear)) {
+                alert('Please enter a valid year.');
+                return;
+            }
+            const filteredEvents = allEvents.filter(event => event.year === parsedYear);
+            if (filteredEvents.length > 0) {
+                displayEvents(filteredEvents);
+            } else {
+                eventsResult.innerHTML = `<p>No events found for the year ${parsedYear}.</p>`;
+            }
+        }
+        fetchAndDisplayEvents();
+        yearSearch.addEventListener('input', function() {
+            if (yearSearch.value.trim() === "") {
+                displayEvents(allEvents);
+            }
+        });
+        yearSearch.addEventListener('keydown', function(event) {
+            if (event.key === "Enter") {
+                filterByYear();
+            }
+        });
+        enableSearchCheckbox.addEventListener('change', function() {
+            if (enableSearchCheckbox.checked) {
+                searchYearContainer.style.display = 'flex';
+            } else {
+                searchYearContainer.style.display = 'none';
+                yearSearch.value = '';
+                displayEvents(allEvents);
+            }
+        });
+    </script>
+</body>
+</html>
